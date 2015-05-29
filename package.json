@@ -1,6 +1,6 @@
 {
   "name": "script-tag-finder",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Gets the JS files from an index.html and optionally writes them to a file",
   "main": "app.js",
   "scripts": {
