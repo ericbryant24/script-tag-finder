@@ -1,31 +1,33 @@
 var fs = require('fs');
-var inputFile = process.argv[2];
-var outputFile = process.argv[3];
-var stringToReplace = process.argv[4];
 
-if(!inputFile) {
-    throw 'Error: No input file specified, should be the first parameter'
-}
+module.exports = {
+    findJSScripts: function (inputFile, outputFile, stringToReplace) {
+        if(!inputFile) {
+            throw 'Error: No input file specified, should be the first parameter'
+        }
 
-fs.readFile(inputFile, 'utf8', function (err, data) {
-    if(err) {
-        throw 'Error: There was an error reading file ' + inputFile + '\n' + err;
+        fs.readFile(inputFile, 'utf8', function (err, data) {
+            if(err) {
+                throw 'Error: There was an error reading file ' + inputFile + '\n' + err;
+            }
+            if(!data) {
+
+                throw 'Error: Input file has no contents';
+            }
+
+            var scripts = getScriptsString(data);
+
+            if(outputFile) {
+                writeToFile(outputFile, scripts, stringToReplace);
+            }
+
+            else {
+                console.log(scripts);
+            }
+        });
     }
-    if(!data) {
+};
 
-        throw 'Error: Input file has no contents';
-    }
-
-    var scripts = getScriptsString(data);
-
-    if(outputFile) {
-        writeToFile(outputFile, scripts, stringToReplace);
-    }
-
-    else {
-        console.log(scripts);
-    }
-});
 
 function getScriptsString(data) {
     var scripts = "";
