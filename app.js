@@ -2,6 +2,7 @@ var fs = require('fs');
 
 module.exports = {
     findJSScripts: function (inputFile, outputFile, callback) {
+        callback = callback || function() {};
         if(!inputFile) {
             callback('Error: No input file specified, should be the first parameter');
         }
@@ -27,7 +28,7 @@ module.exports = {
 
 
 function getScriptsString(data) {
-    var scripts = "";
+    var scripts = "// begin:script-tag-finder-js \n";
     var scriptTagsRegex = /<script[^>]*src="?([^> "]*)"?[^>]*>/g;
     var count = 0;
 
@@ -40,6 +41,8 @@ function getScriptsString(data) {
             scripts += ',\n';
         }
     }
+
+    scripts += "\n// begin:script-tag-finder-js";
 
     return {
         scripts: scripts,
@@ -54,14 +57,17 @@ function writeToFile(file, scripts, callback) {
             callback('Error: cannot open output file ' + file + '\n' + err);
         }
 
-        var result = data.replace(new RegExp('"{{scripts}}"', 'g'), scripts);
-        callback();
+        var result = data.replace(/\/\/.*?begin:script-tag-finder-js[\s\S]*?\/\/.*?end:script-tag-finder-js/g, scripts);
 
         console.log("Writing changes to " + file + '...');
         fs.writeFile(file, result, 'utf8', function (err) {
             if (err) {
                 callback('Error: cannot write to output file ' + file + '\n' + err);
             }
+
+            console.log("Changes written to " + file + '...');
+
+            callback();
         });
     });
 }
